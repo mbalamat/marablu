@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "type": {
+      "const": "object"
+    },
+    "object": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "txids": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "nonce": {
+          "type": "string"
+        },
+        "previd": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "T": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "txids",
+        "nonce",
+        "previd",
+        "created",
+        "T"
+      ]
+    }
+  },
+  "required": [
+    "type",
+    "object"
+  ]
+}

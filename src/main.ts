@@ -3,12 +3,6 @@ import { canonicalize, util } from "./deps.ts";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-const HelloMessage = {
-  type: "hello",
-  agent: "marablu 0.3.1",
-  version: "0.3.1",
-};
-
 interface Peer {
   hostname: string;
   port: number;
@@ -51,6 +45,12 @@ export const isValidAndCanonicalized = (message: string) => {
   return message === messageTmp;
 };
 
+const HelloMessage = {
+  type: "hello",
+  agent: "marablu 0.4.0",
+  version: "0.4.0",
+};
+
 const handleIncomingMessage = async (
   connnection: Deno.Conn,
   state: ConnectionState,
@@ -61,17 +61,18 @@ const handleIncomingMessage = async (
       JSON.stringify(connnection.remoteAddr)
     }: ${message}`,
   );
-  if (!isValidAndCanonicalized(message)) {
-    const errorMessage = {
-      type: "error",
-      error:
-        `Can't parse or validate ${message}, make sure it's a valid canonicalized JSON`,
-    };
-    await connnection.write(
-      encoder.encode(JSON.stringify(errorMessage) + "\n"),
-    );
-    await connnection.close();
-  }
+  // if (!isValidAndCanonicalized(message)) {
+  //   const errorMessage = {
+  //     type: "error",
+  //     error:
+  //       `Can't parse or validate ${message}, make sure it's a valid canonicalized JSON`,
+  //   };
+  //   await connnection.write(
+  //     encoder.encode(JSON.stringify(errorMessage) + "\n"),
+  //   );
+  //   connnection.close();
+  // }
+  // Check why Keftes is having trouble with this ^
   // TODO validate incoming message
   if (state.state === "initial") {
     console.log(state.state);

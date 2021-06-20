@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "type": {
+      "const": "ihaveobject"
+    },
+    "objectid": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "type",
+    "objectid"
+  ]
+}
