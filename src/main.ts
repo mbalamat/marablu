@@ -1,6 +1,5 @@
 import { canonicalize, util } from "./deps.ts";
 
-console.log("Hello Marablu!");
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
@@ -14,10 +13,6 @@ interface Peer {
   hostname: string;
   port: number;
 }
-
-const peers: string[] = [
-  "keftes.di.uoa.gr:18018",
-];
 
 const parsePeerFromString = (_peer: string) => {
   // TODO implement, validate inputs, check if addresses are indeed addresses
@@ -46,6 +41,16 @@ interface ConnectionState {
   state: string;
 }
 
+export const isValidAndCanonicalized = (message: string) => {
+  let messageTmp;
+  try {
+    messageTmp = canonicalize(JSON.parse(message));
+  } catch {
+    return false;
+  }
+  return message === messageTmp;
+};
+
 const handleIncomingMessage = async (
   connnection: Deno.Conn,
   state: ConnectionState,
@@ -56,6 +61,17 @@ const handleIncomingMessage = async (
       JSON.stringify(connnection.remoteAddr)
     }: ${message}`,
   );
+  if (!isValidAndCanonicalized(message)) {
+    const errorMessage = {
+      type: "error",
+      error:
+        `Can't parse or validate ${message}, make sure it's a valid canonicalized JSON`,
+    };
+    await connnection.write(
+      encoder.encode(JSON.stringify(errorMessage) + "\n"),
+    );
+    await connnection.close();
+  }
   // TODO validate incoming message
   if (state.state === "initial") {
     console.log(state.state);
@@ -70,7 +86,7 @@ const handleIncomingMessage = async (
   }
 };
 
-const connectToPeer = async (peer: string) => {
+export const connectToPeer = async (peer: string) => {
   console.log("connecting to peer");
   const { hostname, port } = parsePeerFromString(peer);
   const con = await Deno.connect({ hostname, port });
@@ -82,6 +98,3 @@ const connectToPeer = async (peer: string) => {
     handleIncomingMessage(con, connectionState, decoder.decode(chunk));
   }
 };
-
-// startListener();
-connectToPeer(peers[0]);
