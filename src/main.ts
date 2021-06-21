@@ -36,13 +36,14 @@ interface ConnectionState {
 }
 
 export const isValidAndCanonicalized = (message: string) => {
+  const messageTrimmed = message.trim();
   let messageTmp;
   try {
-    messageTmp = canonicalize(JSON.parse(message));
+    messageTmp = canonicalize(JSON.parse(messageTrimmed));
   } catch {
     return false;
   }
-  return message === messageTmp;
+  return messageTrimmed === messageTmp;
 };
 
 const HelloMessage = {
@@ -61,18 +62,18 @@ const handleIncomingMessage = async (
       JSON.stringify(connnection.remoteAddr)
     }: ${message}`,
   );
-  // if (!isValidAndCanonicalized(message)) {
-  //   const errorMessage = {
-  //     type: "error",
-  //     error:
-  //       `Can't parse or validate ${message}, make sure it's a valid canonicalized JSON`,
-  //   };
-  //   await connnection.write(
-  //     encoder.encode(JSON.stringify(errorMessage) + "\n"),
-  //   );
-  //   connnection.close();
-  // }
-  // Check why Keftes is having trouble with this ^
+  if (!isValidAndCanonicalized(message)) {
+    const errorMessage = {
+      type: "error",
+      error:
+        `Can't parse or validate ${message}, make sure it's a valid canonicalized JSON`,
+    };
+    console.error(JSON.stringify(message));
+    await connnection.write(
+      encoder.encode(canonicalize(JSON.stringify(errorMessage)) + "\n"),
+    );
+    connnection.close();
+  }
   // TODO validate incoming message
   if (state.state === "initial") {
     console.log(state.state);

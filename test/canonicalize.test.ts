@@ -51,7 +51,7 @@ Deno.test({
     "isValidAndCanonicalized(): Should return true if input is canonicalized JSON string",
   fn: () => {
     const canonicalizedJSONstring =
-      '{"agent":"Malibu 0.4.0","type":"hello","version":"0.4.0"}';
+      '{"agent":"Malibu 0.4.0","type":"hello","version":"0.4.0"}\n';
     assertEquals(isValidAndCanonicalized(canonicalizedJSONstring), true);
   },
 });
